@@ -1,0 +1,33 @@
+services:
+  webui:
+    image: ghcr.io/open-webui/open-webui:main
+    ports:
+      - '80:8080'
+    volumes:
+      - open-webui:/app/backend/data
+    environment:
+      OLLAMA_BASE_URL: http://ollama:11434
+      OLLAMA_API_BASE_URL: http://ollama:11434
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - ollama
+    restart: always
+
+
+  ollama:
+    image: ollama/ollama
+    volumes:
+      - ./models:/models
+      - ollama:/var/lib/ollama
+    environment:
+      OLLAMA_MODELS: /var/lib/ollama
+      OLLAMA_HOST: 0.0.0.0
+      OLLAMA_ORIGINS: 172.17.*,192.168.*
+
+volumes:
+  open-webui:
+    name: open-webui
+  ollama:
+    name: ollama
+
